@@ -5,7 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#7851a9">
-  <meta name="description" content="Meu Assistente — organização pessoal e profissional.">
+  <meta name="description" content="Meu Assistente — organização pessoal e profissional de Viviane Dorea.">
+
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+
   <title>Meu Assistente — Viviane Dorea</title>
 
   <style>
@@ -56,7 +60,8 @@
       margin-bottom: 20px;
     }
 
-    .painel, .modulo {
+    .painel,
+    .modulo {
       background: var(--branco);
       border: 1px solid var(--borda);
       border-radius: 16px;
@@ -101,7 +106,9 @@
       font-weight: bold;
     }
 
-    input, textarea, select {
+    input,
+    textarea,
+    select {
       width: 100%;
       padding: 12px;
       border: 1px solid #d9cde5;
@@ -194,7 +201,8 @@
         padding: 14px;
       }
 
-      .painel, .modulo {
+      .painel,
+      .modulo {
         padding: 16px;
       }
 
@@ -208,6 +216,10 @@
 
       .indicador span {
         font-size: 11px;
+      }
+
+      .item {
+        gap: 8px;
       }
     }
   </style>
@@ -227,10 +239,12 @@
         <strong id="totalTarefas">0</strong>
         <span>Tarefas de hoje</span>
       </div>
+
       <div class="indicador">
         <strong id="pendentes">0</strong>
         <span>Pendentes</span>
       </div>
+
       <div class="indicador">
         <strong id="concluidas">0</strong>
         <span>Concluídas</span>
@@ -242,9 +256,13 @@
 
       <form id="formTarefa">
         <label for="titulo">O que você precisa fazer?</label>
-        <input id="titulo" type="text"
+        <input
+          id="titulo"
+          type="text"
           placeholder="Ex.: organizar a agenda da clínica"
-          required maxlength="180">
+          required
+          maxlength="180"
+        >
 
         <label for="horario">Horário (opcional)</label>
         <input id="horario" type="time">
@@ -259,16 +277,22 @@
         </select>
 
         <label for="observacao">Observações (opcional)</label>
-        <textarea id="observacao"
-          placeholder="Detalhes para lembrar..."></textarea>
+        <textarea
+          id="observacao"
+          placeholder="Detalhes para lembrar..."
+        ></textarea>
 
-        <button class="principal" type="submit">+ Adicionar tarefa</button>
+        <button class="principal" type="submit">
+          + Adicionar tarefa
+        </button>
       </form>
     </section>
 
     <section class="modulo">
       <h2>Minha lista de tarefas</h2>
+
       <div id="listaTarefas"></div>
+
       <p id="listaVazia" class="aviso">
         Você ainda não adicionou tarefas para hoje.
       </p>
@@ -276,12 +300,17 @@
 
     <section class="modulo">
       <h2>Notas do dia</h2>
+
       <label for="notas">Ideias, prioridades e lembretes</label>
-      <textarea id="notas"
-        placeholder="Escreva aqui o que deseja organizar..."></textarea>
+      <textarea
+        id="notas"
+        placeholder="Escreva aqui o que deseja organizar..."
+      ></textarea>
+
       <button id="salvarNotas" class="secundario" type="button">
         Salvar notas
       </button>
+
       <p id="estadoNotas" class="aviso"></p>
     </section>
 
@@ -297,15 +326,30 @@
   </footer>
 
   <script>
-    const chaveData = () => new Date().toLocaleDateString("en-CA");
-    const chaveTarefas = () => "meuAssistente_tarefas_" + chaveData();
-    const chaveNotas = () => "meuAssistente_notas_" + chaveData();
+    const chaveData = () => {
+      const agora = new Date();
+      const ano = agora.getFullYear();
+      const mes = String(agora.getMonth() + 1).padStart(2, "0");
+      const dia = String(agora.getDate()).padStart(2, "0");
+      return `${ano}-${mes}-${dia}`;
+    };
+
+    const chaveTarefas = () =>
+      "meuAssistente_tarefas_" + chaveData();
+
+    const chaveNotas = () =>
+      "meuAssistente_notas_" + chaveData();
 
     let tarefas = [];
 
     try {
-      tarefas = JSON.parse(localStorage.getItem(chaveTarefas()) || "[]");
-      if (!Array.isArray(tarefas)) tarefas = [];
+      tarefas = JSON.parse(
+        localStorage.getItem(chaveTarefas()) || "[]"
+      );
+
+      if (!Array.isArray(tarefas)) {
+        tarefas = [];
+      }
     } catch {
       tarefas = [];
     }
@@ -323,14 +367,24 @@
     const listaVazia = document.getElementById("listaVazia");
 
     function guardarTarefas() {
-      localStorage.setItem(chaveTarefas(), JSON.stringify(tarefas));
-      mostrarTarefas();
+      try {
+        localStorage.setItem(
+          chaveTarefas(),
+          JSON.stringify(tarefas)
+        );
+        mostrarTarefas();
+      } catch {
+        alert(
+          "Não foi possível salvar as tarefas neste navegador."
+        );
+      }
     }
 
     function mostrarTarefas() {
       lista.replaceChildren();
 
       const ordenadas = [...tarefas].sort((a, b) => {
+        if (!a.horario && !b.horario) return 0;
         if (!a.horario) return 1;
         if (!b.horario) return -1;
         return a.horario.localeCompare(b.horario);
@@ -342,15 +396,20 @@
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.checked = tarefa.feita;
-        checkbox.setAttribute("aria-label", "Marcar tarefa como concluída");
+        checkbox.checked = Boolean(tarefa.feita);
+        checkbox.setAttribute(
+          "aria-label",
+          "Marcar tarefa como concluída"
+        );
+
         checkbox.addEventListener("change", () => {
           tarefa.feita = checkbox.checked;
           guardarTarefas();
         });
 
         const conteudo = document.createElement("div");
-        conteudo.className = "item-conteudo" +
+        conteudo.className =
+          "item-conteudo" +
           (tarefa.feita ? " concluida" : "");
 
         const titulo = document.createElement("div");
@@ -361,15 +420,21 @@
         detalhes.textContent =
           (tarefa.horario ? tarefa.horario + " · " : "") +
           tarefa.categoria +
-          (tarefa.observacao ? " · " + tarefa.observacao : "");
+          (tarefa.observacao
+            ? " · " + tarefa.observacao
+            : "");
+
         conteudo.appendChild(detalhes);
 
         const excluir = document.createElement("button");
         excluir.type = "button";
         excluir.className = "excluir";
         excluir.textContent = "Excluir";
+
         excluir.addEventListener("click", () => {
-          tarefas = tarefas.filter(item => item.id !== tarefa.id);
+          tarefas = tarefas.filter(
+            item => item.id !== tarefa.id
+          );
           guardarTarefas();
         });
 
@@ -378,9 +443,13 @@
       });
 
       listaVazia.hidden = tarefas.length > 0;
-      document.getElementById("totalTarefas").textContent = tarefas.length;
+
+      document.getElementById("totalTarefas").textContent =
+        tarefas.length;
+
       document.getElementById("pendentes").textContent =
         tarefas.filter(t => !t.feita).length;
+
       document.getElementById("concluidas").textContent =
         tarefas.filter(t => t.feita).length;
     }
@@ -388,15 +457,22 @@
     form.addEventListener("submit", event => {
       event.preventDefault();
 
-      const titulo = document.getElementById("titulo").value.trim();
+      const titulo = document
+        .getElementById("titulo")
+        .value.trim();
+
       if (!titulo) return;
 
       tarefas.push({
-        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        id:
+          Date.now().toString() +
+          Math.random().toString(16).slice(2),
         titulo,
         horario: document.getElementById("horario").value,
         categoria: document.getElementById("categoria").value,
-        observacao: document.getElementById("observacao").value.trim(),
+        observacao: document
+          .getElementById("observacao")
+          .value.trim(),
         feita: false
       });
 
@@ -406,19 +482,44 @@
     });
 
     const campoNotas = document.getElementById("notas");
+    const estadoNotas = document.getElementById("estadoNotas");
+
     try {
-      campoNotas.value = localStorage.getItem(chaveNotas()) || "";
+      campoNotas.value =
+        localStorage.getItem(chaveNotas()) || "";
     } catch {
       campoNotas.value = "";
     }
 
-    document.getElementById("salvarNotas").addEventListener("click", () => {
-      localStorage.setItem(chaveNotas(), campoNotas.value);
-      document.getElementById("estadoNotas").textContent =
-        "Notas salvas neste dispositivo.";
-    });
+    document.getElementById("salvarNotas")
+      .addEventListener("click", () => {
+        try {
+          localStorage.setItem(
+            chaveNotas(),
+            campoNotas.value
+          );
+          estadoNotas.textContent =
+            "Notas salvas neste dispositivo.";
+        } catch {
+          estadoNotas.textContent =
+            "Não foi possível salvar as notas.";
+        }
+      });
 
     mostrarTarefas();
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./service-worker.js")
+          .catch(error => {
+            console.error(
+              "Falha ao registrar o Service Worker:",
+              error
+            );
+          });
+      });
+    }
   </script>
 </body>
 </html>
