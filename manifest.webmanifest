@@ -1,0 +1,22 @@
+
+{
+  "id": "./",
+  "name": "Meu Assistente — Viviane Dorea",
+  "short_name": "Meu Assistente",
+  "description": "Assistente pessoal e profissional de Viviane Dorea.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f8f6fb",
+  "theme_color": "#7851a9",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
