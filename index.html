@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7851a9">
+  <meta name="description" content="Meu Assistente — organização pessoal e profissional.">
+  <title>Meu Assistente — Viviane Dorea</title>
+
+  <style>
+    :root {
+      --roxo: #7851a9;
+      --lilas: #eee6f8;
+      --fundo: #f8f6fb;
+      --texto: #30283a;
+      --branco: #ffffff;
+      --borda: #e7deef;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--texto);
+      background: var(--fundo);
+    }
+
+    header {
+      padding: 25px 20px;
+      color: white;
+      background: linear-gradient(135deg, #7851a9, #a58acb);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    main {
+      width: min(900px, 100%);
+      margin: auto;
+      padding: 20px;
+    }
+
+    .data-atual {
+      color: #685777;
+      margin-bottom: 20px;
+    }
+
+    .painel, .modulo {
+      background: var(--branco);
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px #3d24500a;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 19px;
+    }
+
+    .resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .indicador {
+      background: var(--lilas);
+      padding: 14px 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .indicador strong {
+      display: block;
+      font-size: 24px;
+      color: var(--roxo);
+    }
+
+    .indicador span {
+      font-size: 12px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d9cde5;
+      border-radius: 9px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .principal {
+      color: white;
+      background: var(--roxo);
+    }
+
+    .secundario {
+      color: var(--roxo);
+      background: var(--lilas);
+    }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    .item input[type="checkbox"] {
+      width: auto;
+      margin-top: 4px;
+    }
+
+    .item-conteudo {
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .item-conteudo small {
+      display: block;
+      margin-top: 5px;
+      color: #746780;
+    }
+
+    .concluida {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .excluir {
+      padding: 7px 9px;
+      margin: 0;
+      color: #8d3150;
+      background: #faeaf0;
+      font-size: 12px;
+    }
+
+    .aviso {
+      font-size: 13px;
+      color: #695b73;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #746780;
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 14px;
+      }
+
+      .painel, .modulo {
+        padding: 16px;
+      }
+
+      .resumo {
+        gap: 7px;
+      }
+
+      .indicador {
+        padding: 12px 5px;
+      }
+
+      .indicador span {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Meu Assistente</h1>
+    <p>Viviane Dorea · Sua organização pessoal e profissional</p>
+  </header>
+
+  <main>
+    <div class="data-atual" id="dataAtual"></div>
+
+    <section class="resumo">
+      <div class="indicador">
+        <strong id="totalTarefas">0</strong>
+        <span>Tarefas de hoje</span>
+      </div>
+      <div class="indicador">
+        <strong id="pendentes">0</strong>
+        <span>Pendentes</span>
+      </div>
+      <div class="indicador">
+        <strong id="concluidas">0</strong>
+        <span>Concluídas</span>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Planejamento diário</h2>
+
+      <form id="formTarefa">
+        <label for="titulo">O que você precisa fazer?</label>
+        <input id="titulo" type="text"
+          placeholder="Ex.: organizar a agenda da clínica"
+          required maxlength="180">
+
+        <label for="horario">Horário (opcional)</label>
+        <input id="horario" type="time">
+
+        <label for="categoria">Categoria</label>
+        <select id="categoria">
+          <option value="Pessoal">Pessoal</option>
+          <option value="Clínica">Clínica</option>
+          <option value="Estudos">Estudos</option>
+          <option value="Projetos">Projetos</option>
+          <option value="Financeiro">Financeiro</option>
+        </select>
+
+        <label for="observacao">Observações (opcional)</label>
+        <textarea id="observacao"
+          placeholder="Detalhes para lembrar..."></textarea>
+
+        <button class="principal" type="submit">+ Adicionar tarefa</button>
+      </form>
+    </section>
+
+    <section class="modulo">
+      <h2>Minha lista de tarefas</h2>
+      <div id="listaTarefas"></div>
+      <p id="listaVazia" class="aviso">
+        Você ainda não adicionou tarefas para hoje.
+      </p>
+    </section>
+
+    <section class="modulo">
+      <h2>Notas do dia</h2>
+      <label for="notas">Ideias, prioridades e lembretes</label>
+      <textarea id="notas"
+        placeholder="Escreva aqui o que deseja organizar..."></textarea>
+      <button id="salvarNotas" class="secundario" type="button">
+        Salvar notas
+      </button>
+      <p id="estadoNotas" class="aviso"></p>
+    </section>
+
+    <p class="aviso">
+      Esta é uma versão inicial. As informações ficam armazenadas
+      neste navegador e neste dispositivo. Ainda não há sincronização
+      entre celular e computador.
+    </p>
+  </main>
+
+  <footer>
+    Meu Assistente — Viviane Dorea
+  </footer>
+
+  <script>
+    const chaveData = () => new Date().toLocaleDateString("en-CA");
+    const chaveTarefas = () => "meuAssistente_tarefas_" + chaveData();
+    const chaveNotas = () => "meuAssistente_notas_" + chaveData();
+
+    let tarefas = [];
+
+    try {
+      tarefas = JSON.parse(localStorage.getItem(chaveTarefas()) || "[]");
+      if (!Array.isArray(tarefas)) tarefas = [];
+    } catch {
+      tarefas = [];
+    }
+
+    document.getElementById("dataAtual").textContent =
+      new Date().toLocaleDateString("pt-BR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+
+    const form = document.getElementById("formTarefa");
+    const lista = document.getElementById("listaTarefas");
+    const listaVazia = document.getElementById("listaVazia");
+
+    function guardarTarefas() {
+      localStorage.setItem(chaveTarefas(), JSON.stringify(tarefas));
+      mostrarTarefas();
+    }
+
+    function mostrarTarefas() {
+      lista.replaceChildren();
+
+      const ordenadas = [...tarefas].sort((a, b) => {
+        if (!a.horario) return 1;
+        if (!b.horario) return -1;
+        return a.horario.localeCompare(b.horario);
+      });
+
+      ordenadas.forEach(tarefa => {
+        const linha = document.createElement("div");
+        linha.className = "item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = tarefa.feita;
+        checkbox.setAttribute("aria-label", "Marcar tarefa como concluída");
+        checkbox.addEventListener("change", () => {
+          tarefa.feita = checkbox.checked;
+          guardarTarefas();
+        });
+
+        const conteudo = document.createElement("div");
+        conteudo.className = "item-conteudo" +
+          (tarefa.feita ? " concluida" : "");
+
+        const titulo = document.createElement("div");
+        titulo.textContent = tarefa.titulo;
+        conteudo.appendChild(titulo);
+
+        const detalhes = document.createElement("small");
+        detalhes.textContent =
+          (tarefa.horario ? tarefa.horario + " · " : "") +
+          tarefa.categoria +
+          (tarefa.observacao ? " · " + tarefa.observacao : "");
+        conteudo.appendChild(detalhes);
+
+        const excluir = document.createElement("button");
+        excluir.type = "button";
+        excluir.className = "excluir";
+        excluir.textContent = "Excluir";
+        excluir.addEventListener("click", () => {
+          tarefas = tarefas.filter(item => item.id !== tarefa.id);
+          guardarTarefas();
+        });
+
+        linha.append(checkbox, conteudo, excluir);
+        lista.appendChild(linha);
+      });
+
+      listaVazia.hidden = tarefas.length > 0;
+      document.getElementById("totalTarefas").textContent = tarefas.length;
+      document.getElementById("pendentes").textContent =
+        tarefas.filter(t => !t.feita).length;
+      document.getElementById("concluidas").textContent =
+        tarefas.filter(t => t.feita).length;
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const titulo = document.getElementById("titulo").value.trim();
+      if (!titulo) return;
+
+      tarefas.push({
+        id: Date.now().toString() + Math.random().toString(16).slice(2),
+        titulo,
+        horario: document.getElementById("horario").value,
+        categoria: document.getElementById("categoria").value,
+        observacao: document.getElementById("observacao").value.trim(),
+        feita: false
+      });
+
+      guardarTarefas();
+      form.reset();
+      document.getElementById("titulo").focus();
+    });
+
+    const campoNotas = document.getElementById("notas");
+    try {
+      campoNotas.value = localStorage.getItem(chaveNotas()) || "";
+    } catch {
+      campoNotas.value = "";
+    }
+
+    document.getElementById("salvarNotas").addEventListener("click", () => {
+      localStorage.setItem(chaveNotas(), campoNotas.value);
+      document.getElementById("estadoNotas").textContent =
+        "Notas salvas neste dispositivo.";
+    });
+
+    mostrarTarefas();
+  </script>
+</body>
+</html>
