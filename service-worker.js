@@ -1,7 +1,6 @@
 
-const CACHE_NAME = "meu-assistente-v1";
-
-const ARQUIVOS = [
+const CACHE_NAME = "meu-assistente-v2";
+const FILES = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
@@ -11,61 +10,37 @@ const ARQUIVOS = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(ARQUIVOS))
+      .then(cache => cache.addAll(FILES))
+      .then(() => self.skipWaiting())
   );
-
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(chaves =>
+    caches.keys().then(keys =>
       Promise.all(
-        chaves
-          .filter(chave => chave !== CACHE_NAME)
-          .map(chave => caches.delete(chave))
+        keys
+          .filter(key => key.startsWith("meu-assistente-") && key !== CACHE_NAME)
+          .map(key => caches.delete(key))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
 
-  const url = new URL(event.request.url);
-
-  if (url.origin !== self.location.origin) return;
-
   event.respondWith(
     fetch(event.request)
-      .then(resposta => {
-        if (resposta.ok) {
-          const copia = resposta.clone();
-
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copia);
-          });
+      .then(response => {
+        if (response && response.status === 200 && event.request.url.startsWith(self.location.origin)) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         }
-
-        return resposta;
+        return response;
       })
-      .catch(async () => {
-        const guardado = await caches.match(event.request);
-
-        if (guardado) return guardado;
-
-        if (event.request.mode === "navigate") {
-          return caches.match("./index.html");
-        }
-
-        return new Response("Você está sem conexão.", {
-          status: 503,
-          headers: {
-            "Content-Type": "text/plain; charset=utf-8"
-          }
-        });
-      })
+      .catch(() => caches.match(event.request).then(cached => {
+        return cached || caches.match("./index.html");
+      }))
   );
 });
