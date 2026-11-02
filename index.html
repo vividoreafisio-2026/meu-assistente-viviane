@@ -5,521 +5,910 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#7851a9">
-  <meta name="description" content="Meu Assistente — organização pessoal e profissional de Viviane Dorea.">
-
+  <meta name="description" content="Meu Assistente — organização pessoal e profissional.">
+  <title>Meu Assistente — Viviane Dorea</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-
-  <title>Meu Assistente — Viviane Dorea</title>
 
   <style>
     :root {
       --roxo: #7851a9;
-      --lilas: #eee6f8;
-      --fundo: #f8f6fb;
-      --texto: #30283a;
-      --branco: #ffffff;
-      --borda: #e7deef;
+      --roxo-escuro: #503477;
+      --lilas: #eee7f7;
+      --lilas-claro: #f8f5fc;
+      --rosa: #f5e6ee;
+      --dourado: #d8b66a;
+      --texto: #352c40;
+      --cinza: #81798a;
+      --branco: #fff;
+      --borda: #e9e1f0;
+      --sombra: 0 5px 22px rgba(66, 39, 93, .07);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      background: #f8f6fa;
       color: var(--texto);
-      background: var(--fundo);
+      font-family: Arial, Helvetica, sans-serif;
     }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: flex; }
 
-    header {
-      padding: 25px 20px;
+    aside {
+      width: 245px;
+      background: linear-gradient(180deg, #7851a9, #503477);
       color: white;
-      background: linear-gradient(135deg, #7851a9, #a58acb);
+      padding: 25px 16px;
+      flex-shrink: 0;
+    }
+    .brand { padding: 5px 12px 25px; }
+    .brand h1 { font-size: 21px; margin: 0 0 6px; }
+    .brand p { font-size: 12px; opacity: .8; margin: 0; }
+    nav { display: grid; gap: 5px; }
+    nav button {
+      color: white;
+      background: transparent;
+      border: 0;
+      border-radius: 10px;
+      text-align: left;
+      padding: 12px;
+      font-size: 14px;
+      transition: .2s;
+    }
+    nav button:hover, nav button.active {
+      background: rgba(255,255,255,.19);
+    }
+    .side-note {
+      margin: 35px 10px 0;
+      font-size: 11px;
+      opacity: .7;
+      line-height: 1.6;
     }
 
-    header h1 {
-      margin: 0 0 8px;
-      font-size: 25px;
+    main { flex: 1; min-width: 0; padding: 28px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 25px;
     }
+    .topbar h2 { margin: 0; font-size: 25px; color: var(--roxo-escuro); }
+    .today { color: var(--cinza); font-size: 13px; }
+    .content { max-width: 1200px; margin: auto; }
 
-    header p {
-      margin: 0;
-      opacity: 0.95;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
     }
-
-    main {
-      width: min(900px, 100%);
-      margin: auto;
-      padding: 20px;
-    }
-
-    .data-atual {
-      color: #685777;
-      margin-bottom: 20px;
-    }
-
-    .painel,
-    .modulo {
-      background: var(--branco);
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: white;
       border: 1px solid var(--borda);
       border-radius: 16px;
       padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 3px 12px #3d24500a;
+      box-shadow: var(--sombra);
+      min-width: 0;
     }
+    .card h3 { margin: 0 0 15px; color: var(--roxo-escuro); font-size: 16px; }
+    .stat { font-size: 28px; color: var(--roxo); font-weight: bold; }
+    .muted { color: var(--cinza); font-size: 13px; }
+    .section-title { margin: 25px 0 14px; color: var(--roxo-escuro); }
+    .full { grid-column: 1 / -1; }
 
-    h2 {
-      margin-top: 0;
-      font-size: 19px;
-    }
-
-    .resumo {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .indicador {
-      background: var(--lilas);
-      padding: 14px 10px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .indicador strong {
-      display: block;
-      font-size: 24px;
-      color: var(--roxo);
-    }
-
-    .indicador span {
-      font-size: 12px;
-    }
-
-    label {
-      display: block;
-      margin: 12px 0 6px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    input,
-    textarea,
-    select {
+    form { display: grid; gap: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 6px; font-size: 13px; color: var(--cinza); }
+    input, select, textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #d9cde5;
+      border: 1px solid var(--borda);
+      background: #fff;
       border-radius: 9px;
-      font: inherit;
-      background: white;
+      padding: 11px;
+      color: var(--texto);
+      outline: none;
     }
-
-    textarea {
-      resize: vertical;
-      min-height: 70px;
-    }
-
-    button {
+    input:focus, select:focus, textarea:focus { border-color: var(--roxo); }
+    textarea { min-height: 85px; resize: vertical; }
+    .btn {
+      background: var(--roxo);
+      color: white;
       border: 0;
       border-radius: 9px;
-      padding: 12px 16px;
-      margin-top: 12px;
-      font: inherit;
+      padding: 11px 16px;
       font-weight: bold;
-      cursor: pointer;
     }
-
-    .principal {
-      color: white;
-      background: var(--roxo);
-    }
-
-    .secundario {
-      color: var(--roxo);
-      background: var(--lilas);
-    }
+    .btn:hover { background: var(--roxo-escuro); }
+    .btn.secondary { background: var(--lilas); color: var(--roxo-escuro); }
+    .btn.danger { background: #f8e8eb; color: #a33d55; }
+    .btn.small { padding: 7px 10px; font-size: 12px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .item {
+      border-bottom: 1px solid var(--borda);
+      padding: 12px 0;
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--borda);
+      justify-content: space-between;
+      gap: 12px;
     }
-
-    .item:last-child {
-      border-bottom: 0;
-    }
-
-    .item input[type="checkbox"] {
-      width: auto;
-      margin-top: 4px;
-    }
-
-    .item-conteudo {
-      flex: 1;
-      overflow-wrap: anywhere;
-    }
-
-    .item-conteudo small {
-      display: block;
+    .item:last-child { border-bottom: 0; }
+    .item strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .item small { color: var(--cinza); font-size: 12px; }
+    .tag {
+      display: inline-block;
+      background: var(--lilas);
+      color: var(--roxo-escuro);
+      border-radius: 20px;
+      padding: 4px 9px;
+      font-size: 11px;
       margin-top: 5px;
-      color: #746780;
     }
+    .empty { color: var(--cinza); font-size: 13px; padding: 12px 0; }
+    .progress { height: 8px; background: var(--lilas); border-radius: 20px; overflow: hidden; margin-top: 8px; }
+    .progress span { display: block; height: 100%; background: var(--roxo); }
+    .checkline { display: flex; align-items: center; gap: 8px; }
+    .checkline input { width: auto; }
 
-    .concluida {
-      text-decoration: line-through;
-      opacity: 0.6;
+    .calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
     }
-
-    .excluir {
-      padding: 7px 9px;
-      margin: 0;
-      color: #8d3150;
-      background: #faeaf0;
-      font-size: 12px;
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 5px;
     }
-
-    .aviso {
-      font-size: 13px;
-      color: #695b73;
-      line-height: 1.5;
-    }
-
-    footer {
-      padding: 20px;
+    .day-name, .day {
       text-align: center;
-      color: #746780;
+      padding: 9px 2px;
       font-size: 12px;
     }
+    .day-name { color: var(--cinza); font-weight: bold; }
+    .day {
+      min-height: 62px;
+      background: var(--lilas-claro);
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .day:hover { border-color: var(--roxo); }
+    .day.today { border-color: var(--roxo); font-weight: bold; }
+    .day.selected { background: var(--lilas); }
+    .day.has-event:after {
+      content: "•";
+      display: block;
+      color: var(--roxo);
+      font-size: 18px;
+      line-height: 10px;
+    }
+    .day.blank { background: transparent; cursor: default; }
 
-    @media (max-width: 480px) {
-      main {
-        padding: 14px;
-      }
+    .wheel-wrap { max-width: 550px; margin: auto; }
+    canvas { width: 100%; max-width: 500px; display: block; margin: auto; }
+    .score-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .score-grid label { color: var(--texto); }
 
-      .painel,
-      .modulo {
-        padding: 16px;
-      }
-
-      .resumo {
-        gap: 7px;
-      }
-
-      .indicador {
-        padding: 12px 5px;
-      }
-
-      .indicador span {
-        font-size: 11px;
-      }
-
-      .item {
-        gap: 8px;
-      }
+    .mobile-title { display: none; }
+    @media(max-width: 850px) {
+      .app { display: block; }
+      aside { width: 100%; padding: 14px; }
+      .brand { padding: 4px 5px 12px; }
+      nav { display: flex; overflow-x: auto; padding-bottom: 4px; }
+      nav button { white-space: nowrap; padding: 10px; font-size: 12px; }
+      .side-note { display: none; }
+      main { padding: 18px 13px 30px; }
+      .topbar h2 { font-size: 21px; }
+      .grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media(max-width: 520px) {
+      .grid, .grid.three, .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .card { padding: 16px; }
+      .day { min-height: 48px; font-size: 11px; }
+      .score-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Meu Assistente</h1>
-    <p>Viviane Dorea · Sua organização pessoal e profissional</p>
-  </header>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <h1>Meu Assistente</h1>
+      <p>Viviane Dorea · Organização em movimento</p>
+    </div>
+    <nav id="menu">
+      <button class="active" data-page="inicio">⌂ Início</button>
+      <button data-page="agenda">▦ Agenda</button>
+      <button data-page="tarefas">✓ Tarefas</button>
+      <button data-page="emocoes">♡ Emoções</button>
+      <button data-page="roda">◉ Roda da Vida</button>
+      <button data-page="consultorio">✚ Consultório</button>
+      <button data-page="financeiro">R$ Financeiro</button>
+      <button data-page="projetos">◇ Projetos</button>
+      <button data-page="habitos">↗ Hábitos</button>
+      <button data-page="diario">▤ Diário</button>
+      <button data-page="backup">⇧ Backup</button>
+    </nav>
+    <div class="side-note">Seu espaço de organização pessoal e profissional.<br>Pequenos passos também são movimento.</div>
+  </aside>
 
   <main>
-    <div class="data-atual" id="dataAtual"></div>
-
-    <section class="resumo">
-      <div class="indicador">
-        <strong id="totalTarefas">0</strong>
-        <span>Tarefas de hoje</span>
-      </div>
-
-      <div class="indicador">
-        <strong id="pendentes">0</strong>
-        <span>Pendentes</span>
-      </div>
-
-      <div class="indicador">
-        <strong id="concluidas">0</strong>
-        <span>Concluídas</span>
-      </div>
-    </section>
-
-    <section class="painel">
-      <h2>Planejamento diário</h2>
-
-      <form id="formTarefa">
-        <label for="titulo">O que você precisa fazer?</label>
-        <input
-          id="titulo"
-          type="text"
-          placeholder="Ex.: organizar a agenda da clínica"
-          required
-          maxlength="180"
-        >
-
-        <label for="horario">Horário (opcional)</label>
-        <input id="horario" type="time">
-
-        <label for="categoria">Categoria</label>
-        <select id="categoria">
-          <option value="Pessoal">Pessoal</option>
-          <option value="Clínica">Clínica</option>
-          <option value="Estudos">Estudos</option>
-          <option value="Projetos">Projetos</option>
-          <option value="Financeiro">Financeiro</option>
-        </select>
-
-        <label for="observacao">Observações (opcional)</label>
-        <textarea
-          id="observacao"
-          placeholder="Detalhes para lembrar..."
-        ></textarea>
-
-        <button class="principal" type="submit">
-          + Adicionar tarefa
-        </button>
-      </form>
-    </section>
-
-    <section class="modulo">
-      <h2>Minha lista de tarefas</h2>
-
-      <div id="listaTarefas"></div>
-
-      <p id="listaVazia" class="aviso">
-        Você ainda não adicionou tarefas para hoje.
-      </p>
-    </section>
-
-    <section class="modulo">
-      <h2>Notas do dia</h2>
-
-      <label for="notas">Ideias, prioridades e lembretes</label>
-      <textarea
-        id="notas"
-        placeholder="Escreva aqui o que deseja organizar..."
-      ></textarea>
-
-      <button id="salvarNotas" class="secundario" type="button">
-        Salvar notas
-      </button>
-
-      <p id="estadoNotas" class="aviso"></p>
-    </section>
-
-    <p class="aviso">
-      Esta é uma versão inicial. As informações ficam armazenadas
-      neste navegador e neste dispositivo. Ainda não há sincronização
-      entre celular e computador.
-    </p>
+    <div class="topbar">
+      <h2 id="pageTitle">Início</h2>
+      <span class="today" id="todayLabel"></span>
+    </div>
+    <div class="content" id="content"></div>
   </main>
+</div>
 
-  <footer>
-    Meu Assistente — Viviane Dorea
-  </footer>
+<script>
+(() => {
+  "use strict";
 
-  <script>
-    const chaveData = () => {
-      const agora = new Date();
-      const ano = agora.getFullYear();
-      const mes = String(agora.getMonth() + 1).padStart(2, "0");
-      const dia = String(agora.getDate()).padStart(2, "0");
-      return `${ano}-${mes}-${dia}`;
-    };
+  const KEY = "meuAssistente_v2";
+  const today = () => new Date().toLocaleDateString("en-CA");
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-    const chaveTarefas = () =>
-      "meuAssistente_tarefas_" + chaveData();
+  const blankData = () => ({
+    tasks: [], emotions: [], wheel: [], finance: [],
+    projects: [], habits: [], diary: [], appointments: []
+  });
 
-    const chaveNotas = () =>
-      "meuAssistente_notas_" + chaveData();
+  let data = blankData();
+  let page = "inicio";
+  let selectedDate = today();
+  let calendarMonth = new Date();
 
-    let tarefas = [];
-
+  function load() {
     try {
-      tarefas = JSON.parse(
-        localStorage.getItem(chaveTarefas()) || "[]"
-      );
-
-      if (!Array.isArray(tarefas)) {
-        tarefas = [];
-      }
-    } catch {
-      tarefas = [];
+      const saved = JSON.parse(localStorage.getItem(KEY));
+      if (saved && typeof saved === "object") data = { ...blankData(), ...saved };
+    } catch (e) {
+      console.warn("Não foi possível ler os dados salvos.", e);
     }
+    migrateOldData();
+  }
 
-    document.getElementById("dataAtual").textContent =
-      new Date().toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(data));
+  }
 
-    const form = document.getElementById("formTarefa");
-    const lista = document.getElementById("listaTarefas");
-    const listaVazia = document.getElementById("listaVazia");
+  // Importa tarefas e notas da versão antiga sem apagar as chaves originais.
+  function migrateOldData() {
+    if (localStorage.getItem("meuAssistente_migracao_v2") === "ok") return;
 
-    function guardarTarefas() {
-      try {
-        localStorage.setItem(
-          chaveTarefas(),
-          JSON.stringify(tarefas)
-        );
-        mostrarTarefas();
-      } catch {
-        alert(
-          "Não foi possível salvar as tarefas neste navegador."
-        );
-      }
-    }
+    const importedTaskIds = new Set(data.tasks.map(t => t.legacyId).filter(Boolean));
+    const importedNotes = new Set(data.diary.map(d => d.legacyId).filter(Boolean));
 
-    function mostrarTarefas() {
-      lista.replaceChildren();
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
 
-      const ordenadas = [...tarefas].sort((a, b) => {
-        if (!a.horario && !b.horario) return 0;
-        if (!a.horario) return 1;
-        if (!b.horario) return -1;
-        return a.horario.localeCompare(b.horario);
-      });
-
-      ordenadas.forEach(tarefa => {
-        const linha = document.createElement("div");
-        linha.className = "item";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = Boolean(tarefa.feita);
-        checkbox.setAttribute(
-          "aria-label",
-          "Marcar tarefa como concluída"
-        );
-
-        checkbox.addEventListener("change", () => {
-          tarefa.feita = checkbox.checked;
-          guardarTarefas();
-        });
-
-        const conteudo = document.createElement("div");
-        conteudo.className =
-          "item-conteudo" +
-          (tarefa.feita ? " concluida" : "");
-
-        const titulo = document.createElement("div");
-        titulo.textContent = tarefa.titulo;
-        conteudo.appendChild(titulo);
-
-        const detalhes = document.createElement("small");
-        detalhes.textContent =
-          (tarefa.horario ? tarefa.horario + " · " : "") +
-          tarefa.categoria +
-          (tarefa.observacao
-            ? " · " + tarefa.observacao
-            : "");
-
-        conteudo.appendChild(detalhes);
-
-        const excluir = document.createElement("button");
-        excluir.type = "button";
-        excluir.className = "excluir";
-        excluir.textContent = "Excluir";
-
-        excluir.addEventListener("click", () => {
-          tarefas = tarefas.filter(
-            item => item.id !== tarefa.id
-          );
-          guardarTarefas();
-        });
-
-        linha.append(checkbox, conteudo, excluir);
-        lista.appendChild(linha);
-      });
-
-      listaVazia.hidden = tarefas.length > 0;
-
-      document.getElementById("totalTarefas").textContent =
-        tarefas.length;
-
-      document.getElementById("pendentes").textContent =
-        tarefas.filter(t => !t.feita).length;
-
-      document.getElementById("concluidas").textContent =
-        tarefas.filter(t => t.feita).length;
-    }
-
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-
-      const titulo = document
-        .getElementById("titulo")
-        .value.trim();
-
-      if (!titulo) return;
-
-      tarefas.push({
-        id:
-          Date.now().toString() +
-          Math.random().toString(16).slice(2),
-        titulo,
-        horario: document.getElementById("horario").value,
-        categoria: document.getElementById("categoria").value,
-        observacao: document
-          .getElementById("observacao")
-          .value.trim(),
-        feita: false
-      });
-
-      guardarTarefas();
-      form.reset();
-      document.getElementById("titulo").focus();
-    });
-
-    const campoNotas = document.getElementById("notas");
-    const estadoNotas = document.getElementById("estadoNotas");
-
-    try {
-      campoNotas.value =
-        localStorage.getItem(chaveNotas()) || "";
-    } catch {
-      campoNotas.value = "";
-    }
-
-    document.getElementById("salvarNotas")
-      .addEventListener("click", () => {
+      let match = key.match(/^meuAssistente_tarefas_(\d{4}-\d{2}-\d{2})$/);
+      if (match) {
         try {
-          localStorage.setItem(
-            chaveNotas(),
-            campoNotas.value
-          );
-          estadoNotas.textContent =
-            "Notas salvas neste dispositivo.";
-        } catch {
-          estadoNotas.textContent =
-            "Não foi possível salvar as notas.";
-        }
-      });
+          const oldTasks = JSON.parse(localStorage.getItem(key));
+          if (Array.isArray(oldTasks)) {
+            oldTasks.forEach((task, index) => {
+              const legacyId = key + "_" + index;
+              if (importedTaskIds.has(legacyId)) return;
+              const title = typeof task === "string" ? task : (task.text || task.nome || task.title || task.tarefa || "");
+              if (!title) return;
+              data.tasks.push({
+                id: uid(), legacyId, title, date: match[1],
+                time: "", category: "Pessoal",
+                done: !!(task.done || task.concluida || task.completed)
+              });
+            });
+          }
+        } catch (e) {}
+      }
 
-    mostrarTarefas();
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("./service-worker.js")
-          .catch(error => {
-            console.error(
-              "Falha ao registrar o Service Worker:",
-              error
-            );
+      match = key.match(/^meuAssistente_notas_(\d{4}-\d{2}-\d{2})$/);
+      if (match) {
+        const legacyId = key;
+        if (importedNotes.has(legacyId)) continue;
+        const note = localStorage.getItem(key);
+        if (note && note.trim()) {
+          data.diary.push({
+            id: uid(), legacyId, date: match[1],
+            title: "Anotação antiga", text: note
           });
-      });
+        }
+      }
     }
-  </script>
+
+    localStorage.setItem("meuAssistente_migracao_v2", "ok");
+    save();
+  }
+
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
+
+  const money = value => Number(value || 0).toLocaleString("pt-BR", {
+    style: "currency", currency: "BRL"
+  });
+
+  const dateBR = value => {
+    if (!value) return "";
+    const [y, m, d] = value.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+  const monthBR = date => date.toLocaleDateString("pt-BR", {
+    month: "long", year: "numeric"
+  });
+
+  function setPage(next) {
+    page = next;
+    document.querySelectorAll("#menu button").forEach(btn =>
+      btn.classList.toggle("active", btn.dataset.page === page)
+    );
+    const labels = {
+      inicio: "Início", agenda: "Agenda", tarefas: "Tarefas",
+      emocoes: "Planejador emocional", roda: "Roda da Vida",
+      consultorio: "Consultório", financeiro: "Financeiro",
+      projetos: "Projetos", habitos: "Hábitos", diario: "Diário",
+      backup: "Backup e segurança"
+    };
+    document.getElementById("pageTitle").textContent = labels[page] || "Meu Assistente";
+    render();
+  }
+
+  function taskForm() {
+    return `
+      <div class="card">
+        <h3>Adicionar tarefa</h3>
+        <form id="taskForm">
+          <label>O que precisa ser feito?
+            <input name="title" required placeholder="Digite sua tarefa">
+          </label>
+          <div class="form-grid">
+            <label>Data<input type="date" name="date" value="${selectedDate}" required></label>
+            <label>Horário<input type="time" name="time"></label>
+          </div>
+          <label>Categoria
+            <select name="category">
+              <option>Pessoal</option><option>Profissional</option>
+              <option>Consultório</option><option>Estudos</option>
+              <option>Família</option><option>Projeto</option>
+            </select>
+          </label>
+          <button class="btn">Salvar tarefa</button>
+        </form>
+      </div>`;
+  }
+
+  function taskList(filterDate = null) {
+    let tasks = [...data.tasks].filter(t => !filterDate || t.date === filterDate);
+    tasks.sort((a, b) => (a.date + (a.time || "" )).localeCompare(b.date + (b.time || "")));
+    if (!tasks.length) return `<p class="empty">Nenhuma tarefa cadastrada.</p>`;
+    return tasks.map(t => `
+      <div class="item">
+        <div>
+          <div class="checkline">
+            <input type="checkbox" data-action="taskDone" data-id="${esc(t.id)}" ${t.done ? "checked" : ""}>
+            <strong style="${t.done ? "text-decoration:line-through;opacity:.55" : ""}">${esc(t.title)}</strong>
+          </div>
+          <small>${dateBR(t.date)} ${t.time ? "· " + esc(t.time) : ""}</small><br>
+          <span class="tag">${esc(t.category || "Pessoal")}</span>
+        </div>
+        <button class="btn danger small" data-action="delete" data-list="tasks" data-id="${esc(t.id)}">Excluir</button>
+      </div>`).join("");
+  }
+
+  function appointmentForm() {
+    return `
+      <div class="card">
+        <h3>Novo compromisso</h3>
+        <form id="appointmentForm">
+          <label>Descrição<input name="title" required placeholder="Ex.: reunião, consulta, evento"></label>
+          <div class="form-grid">
+            <label>Data<input name="date" type="date" value="${selectedDate}" required></label>
+            <label>Horário<input name="time" type="time"></label>
+          </div>
+          <label>Local ou observação<input name="place" placeholder="Local, endereço ou detalhe"></label>
+          <button class="btn">Salvar compromisso</button>
+        </form>
+      </div>`;
+  }
+
+  function calendarView() {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const first = new Date(year, month, 1).getDay();
+    const total = new Date(year, month + 1, 0).getDate();
+    let html = `<div class="calendar-head">
+      <button class="btn secondary small" data-action="prevMonth">‹</button>
+      <strong>${esc(monthBR(calendarMonth))}</strong>
+      <button class="btn secondary small" data-action="nextMonth">›</button>
+    </div><div class="calendar">`;
+    ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].forEach(d => html += `<div class="day-name">${d}</div>`);
+    for (let i = 0; i < first; i++) html += `<div class="day blank"></div>`;
+    for (let d = 1; d <= total; d++) {
+      const date = `${year}-${String(month + 1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      const has = data.tasks.some(t => t.date === date) || data.appointments.some(a => a.date === date);
+      html += `<div class="day ${date === today() ? "today" : ""} ${date === selectedDate ? "selected" : ""} ${has ? "has-event" : ""}" data-action="selectDate" data-date="${date}">${d}</div>`;
+    }
+    return html + `</div>`;
+  }
+
+  function home() {
+    const pending = data.tasks.filter(t => !t.done);
+    const todayTasks = pending.filter(t => t.date === today());
+    const month = today().slice(0, 7);
+    const income = data.finance.filter(f => f.type === "Entrada" && f.date.startsWith(month)).reduce((s,f) => s + Number(f.value), 0);
+    const expenses = data.finance.filter(f => f.type === "Saída" && f.date.startsWith(month)).reduce((s,f) => s + Number(f.value), 0);
+    const next = [...data.appointments].filter(a => a.date >= today()).sort((a,b) => a.date.localeCompare(b.date)).slice(0,4);
+
+    return `
+      <div class="grid three">
+        <div class="card"><h3>Tarefas pendentes</h3><div class="stat">${pending.length}</div><span class="muted">Em toda a agenda</span></div>
+        <div class="card"><h3>Para hoje</h3><div class="stat">${todayTasks.length}</div><span class="muted">Tarefas ainda abertas</span></div>
+        <div class="card"><h3>Saldo do mês</h3><div class="stat">${money(income-expenses)}</div><span class="muted">Entradas menos saídas</span></div>
+      </div>
+      <h3 class="section-title">Minha organização</h3>
+      <div class="grid">
+        <div class="card"><h3>Tarefas de hoje</h3>${taskList(today())}<button class="btn secondary small" data-page="tarefas">Ver tarefas</button></div>
+        <div class="card"><h3>Próximos compromissos</h3>
+          ${next.length ? next.map(a => `<div class="item"><div><strong>${esc(a.title)}</strong><small>${dateBR(a.date)} ${esc(a.time || "")}</small></div></div>`).join("") : `<p class="empty">Nenhum compromisso futuro cadastrado.</p>`}
+          <button class="btn secondary small" data-page="agenda">Abrir agenda</button>
+        </div>
+      </div>
+      <h3 class="section-title">Acompanhe seus projetos</h3>
+      <div class="card">${projectList()}</div>`;
+  }
+
+  function projectList() {
+    if (!data.projects.length) return `<p class="empty">Você ainda não cadastrou projetos.</p>`;
+    return data.projects.map(p => `
+      <div class="item"><div style="flex:1">
+        <strong>${esc(p.name)}</strong><small>${esc(p.status || "Em andamento")}</small>
+        <div class="progress"><span style="width:${Math.max(0,Math.min(100,Number(p.progress)||0))}%"></span></div>
+        <small>${Number(p.progress)||0}% concluído</small>
+      </div><button class="btn danger small" data-action="delete" data-list="projects" data-id="${esc(p.id)}">Excluir</button></div>`).join("");
+  }
+
+  function emotionPage() {
+    return `
+      <div class="grid">
+        <div class="card">
+          <h3>Como estou me sentindo hoje?</h3>
+          <form id="emotionForm">
+            <label>Emoção
+              <select name="emotion" required>
+                <option value="">Selecione</option>
+                <option>Feliz</option><option>Tranquila</option><option>Grata</option>
+                <option>Motivada</option><option>Ansiosa</option><option>Triste</option>
+                <option>Cansada</option><option>Sobrecarregada</option>
+                <option>Irritada</option><option>Desanimada</option>
+              </select>
+            </label>
+            <label>Intensidade: <span id="intensityValue">5</span>/10
+              <input type="range" name="intensity" min="1" max="10" value="5" id="intensity">
+            </label>
+            <label>O que influenciou meu dia?
+              <textarea name="note" placeholder="Escreva livremente..."></textarea>
+            </label>
+            <button class="btn">Registrar emoção</button>
+          </form>
+        </div>
+        <div class="card"><h3>Meu histórico</h3>
+          ${data.emotions.length ? [...data.emotions].reverse().slice(0,10).map(e => `
+            <div class="item"><div><strong>${esc(e.emotion)} · ${e.intensity}/10</strong><small>${dateBR(e.date)}</small><p class="muted">${esc(e.note)}</p></div>
+            <button class="btn danger small" data-action="delete" data-list="emotions" data-id="${esc(e.id)}">Excluir</button></div>`).join("") : `<p class="empty">Seus registros aparecerão aqui.</p>`}
+        </div>
+        <div class="card full"><h3>Resumo deste mês</h3>
+          ${emotionSummary()}
+        </div>
+      </div>`;
+  }
+
+  function emotionSummary() {
+    const month = today().slice(0,7);
+    const list = data.emotions.filter(e => e.date.startsWith(month));
+    if (!list.length) return `<p class="empty">Ainda não há registros neste mês.</p>`;
+    const avg = list.reduce((s,e) => s + Number(e.intensity),0) / list.length;
+    const counts = {};
+    list.forEach(e => counts[e.emotion] = (counts[e.emotion] || 0) + 1);
+    const common = Object.entries(counts).sort((a,b) => b[1]-a[1])[0];
+    return `<p>Registros: <strong>${list.length}</strong></p><p>Intensidade média: <strong>${avg.toFixed(1)}/10</strong></p><p>Emoção mais registrada: <strong>${esc(common[0])}</strong> (${common[1]} vezes)</p>`;
+  }
+
+  const dimensions = ["Saúde","Família","Relacionamentos","Carreira","Finanças","Desenvolvimento pessoal","Lazer","Espiritualidade"];
+
+  function wheelPage() {
+    const last = data.wheel[data.wheel.length - 1];
+    return `
+      <div class="grid">
+        <div class="card">
+          <h3>Minha avaliação de hoje</h3>
+          <p class="muted">Dê uma nota de 0 a 10 para cada dimensão da sua vida.</p>
+          <form id="wheelForm">
+            <div class="score-grid">
+              ${dimensions.map((d,i) => `<label>${d}<input type="number" name="score${i}" min="0" max="10" value="${last ? last.scores[i] : 5}" required></label>`).join("")}
+            </div>
+            <label>O que desejo melhorar?
+              <textarea name="note" placeholder="Uma pequena ação que posso começar..."></textarea>
+            </label>
+            <button class="btn">Salvar avaliação</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Minha Roda da Vida</h3>
+          ${last ? `<p class="muted">Última avaliação: ${dateBR(last.date)}</p><div class="wheel-wrap"><canvas id="wheelCanvas" width="500" height="500"></canvas></div>` : `<p class="empty">Faça sua primeira avaliação para visualizar sua roda.</p>`}
+        </div>
+        <div class="card full"><h3>Histórico de avaliações</h3>
+          ${data.wheel.length ? [...data.wheel].reverse().map(w => `<div class="item"><div><strong>${dateBR(w.date)}</strong><small>Média: ${(w.scores.reduce((a,b)=>a+Number(b),0)/8).toFixed(1)}/10</small><p class="muted">${esc(w.note)}</p></div><button class="btn danger small" data-action="delete" data-list="wheel" data-id="${esc(w.id)}">Excluir</button></div>`).join("") : `<p class="empty">Nenhuma avaliação registrada.</p>`}
+        </div>
+      </div>`;
+  }
+
+  function drawWheel() {
+    const canvas = document.getElementById("wheelCanvas");
+    const last = data.wheel[data.wheel.length - 1];
+    if (!canvas || !last) return;
+    const ctx = canvas.getContext("2d");
+    const cx = 250, cy = 245, radius = 155, n = 8;
+    ctx.clearRect(0,0,500,500);
+    ctx.font = "12px Arial";
+    for (let level=1; level<=10; level++) {
+      const r = radius * level / 10;
+      ctx.beginPath();
+      for(let i=0;i<n;i++){
+        const a = -Math.PI/2 + i*2*Math.PI/n;
+        const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath(); ctx.strokeStyle="#e6ddec"; ctx.stroke();
+    }
+    for(let i=0;i<n;i++){
+      const a=-Math.PI/2+i*2*Math.PI/n;
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+radius*Math.cos(a),cy+radius*Math.sin(a));
+      ctx.strokeStyle="#d8c9e6"; ctx.stroke();
+    }
+    ctx.beginPath();
+    last.scores.forEach((s,i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n, r=radius*Number(s)/10;
+      const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.closePath(); ctx.fillStyle="rgba(120,81,169,.25)";
+    ctx.fill(); ctx.strokeStyle="#7851a9"; ctx.lineWidth=3; ctx.stroke();
+    last.scores.forEach((s,i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n, r=radius*Number(s)/10;
+      ctx.beginPath(); ctx.arc(cx+r*Math.cos(a),cy+r*Math.sin(a),4,0,Math.PI*2);
+      ctx.fillStyle="#7851a9"; ctx.fill();
+      const labelR=radius+34;
+      ctx.fillStyle="#503477"; ctx.textAlign="center";
+      ctx.fillText(dimensions[i],cx+labelR*Math.cos(a),cy+labelR*Math.sin(a));
+    });
+  }
+
+  function financePage() {
+    const month = today().slice(0,7);
+    const list = data.finance.filter(f => f.date.startsWith(month));
+    const income = list.filter(f=>f.type==="Entrada").reduce((s,f)=>s+Number(f.value),0);
+    const expense = list.filter(f=>f.type==="Saída").reduce((s,f)=>s+Number(f.value),0);
+    return `
+      <div class="grid three">
+        <div class="card"><h3>Entradas do mês</h3><div class="stat">${money(income)}</div></div>
+        <div class="card"><h3>Saídas do mês</h3><div class="stat">${money(expense)}</div></div>
+        <div class="card"><h3>Saldo do mês</h3><div class="stat">${money(income-expense)}</div></div>
+      </div>
+      <h3 class="section-title">Lançamento financeiro</h3>
+      <div class="grid">
+        <div class="card"><form id="financeForm">
+          <label>Descrição<input name="description" required placeholder="Ex.: atendimento, aluguel, material"></label>
+          <div class="form-grid">
+            <label>Tipo<select name="type"><option>Entrada</option><option>Saída</option></select></label>
+            <label>Valor (R$)<input name="value" type="number" min="0.01" step="0.01" required></label>
+          </div>
+          <label>Data<input name="date" type="date" value="${today()}" required></label>
+          <label>Categoria<input name="category" placeholder="Ex.: atendimento, alimentação"></label>
+          <button class="btn">Salvar lançamento</button>
+        </form></div>
+        <div class="card"><h3>Lançamentos deste mês</h3>
+          ${list.length ? [...list].reverse().map(f=>`<div class="item"><div><strong>${esc(f.description)}</strong><small>${dateBR(f.date)} · ${esc(f.category)}</small><br><span class="tag">${esc(f.type)} · ${money(f.value)}</span></div><button class="btn danger small" data-action="delete" data-list="finance" data-id="${esc(f.id)}">Excluir</button></div>`).join("") : `<p class="empty">Nenhum lançamento neste mês.</p>`}
+        </div>
+      </div>`;
+  }
+
+  function projectPage() {
+    return `<div class="grid">
+      <div class="card"><h3>Novo projeto</h3>
+        <form id="projectForm">
+          <label>Nome do projeto<input name="name" required placeholder="Nome do projeto"></label>
+          <label>Etapa atual<input name="status" placeholder="Ex.: planejamento"></label>
+          <label>Progresso: <span id="progressValue">0</span>%
+            <input type="range" min="0" max="100" value="0" name="progress" id="projectProgress">
+          </label>
+          <button class="btn">Adicionar projeto</button>
+        </form>
+      </div>
+      <div class="card"><h3>Meus projetos</h3>${projectList()}</div>
+    </div>`;
+  }
+
+  function habitsPage() {
+    const todayHabits = data.habits.filter(h=>h.date===today());
+    return `<div class="grid">
+      <div class="card"><h3>Registrar hábito</h3>
+        <form id="habitForm">
+          <label>Hábito<input name="name" required placeholder="Ex.: beber água, academia, leitura"></label>
+          <label>Data<input type="date" name="date" value="${today()}" required></label>
+          <button class="btn">Adicionar hábito</button>
+        </form>
+      </div>
+      <div class="card"><h3>Hábitos de hoje</h3>
+        ${todayHabits.length ? todayHabits.map(h=>`<div class="item"><label class="checkline"><input type="checkbox" data-action="habitDone" data-id="${esc(h.id)}" ${h.done?"checked":""}><strong>${esc(h.name)}</strong></label><button class="btn danger small" data-action="delete" data-list="habits" data-id="${esc(h.id)}">Excluir</button></div>`).join("") : `<p class="empty">Nenhum hábito registrado para hoje.</p>`}
+      </div>
+      <div class="card full"><h3>Histórico de hábitos</h3>
+        ${data.habits.length ? [...data.habits].reverse().slice(0,30).map(h=>`<div class="item"><div><strong>${esc(h.name)}</strong><small>${dateBR(h.date)} · ${h.done?"Concluído":"Pendente"}</small></div></div>`).join("") : `<p class="empty">Seu histórico aparecerá aqui.</p>`}
+      </div>
+    </div>`;
+  }
+
+  function diaryPage() {
+    return `<div class="grid">
+      <div class="card"><h3>Meu diário</h3>
+        <form id="diaryForm">
+          <label>Data<input name="date" type="date" value="${today()}" required></label>
+          <label>Título<input name="title" placeholder="Como foi meu dia?"></label>
+          <label>Registro<textarea name="text" required placeholder="Escreva seus pensamentos, conquistas e aprendizados..."></textarea></label>
+          <button class="btn">Salvar no diário</button>
+        </form>
+      </div>
+      <div class="card"><h3>Meus registros</h3>
+        ${data.diary.length ? [...data.diary].reverse().map(d=>`<div class="item"><div><strong>${esc(d.title || "Registro")}</strong><small>${dateBR(d.date)}</small><p class="muted">${esc(d.text)}</p></div><button class="btn danger small" data-action="delete" data-list="diary" data-id="${esc(d.id)}">Excluir</button></div>`).join("") : `<p class="empty">Seu diário ainda está vazio.</p>`}
+      </div>
+    </div>`;
+  }
+
+  function agendaPage() {
+    return `<div class="grid">
+      <div class="card"><h3>Calendário</h3>${calendarView()}</div>
+      <div class="card"><h3>Compromissos</h3>${appointmentForm()}
+        <div style="margin-top:15px">${data.appointments.filter(a=>a.date===selectedDate).map(a=>`<div class="item"><div><strong>${esc(a.title)}</strong><small>${dateBR(a.date)} ${esc(a.time||"")} · ${esc(a.place||"")}</small></div><button class="btn danger small" data-action="delete" data-list="appointments" data-id="${esc(a.id)}">Excluir</button></div>`).join("") || `<p class="empty">Nenhum compromisso nesta data.</p>`}</div>
+      </div>
+      <div class="card full"><h3>Tarefas de ${dateBR(selectedDate)}</h3>${taskList(selectedDate)}<button class="btn secondary small" data-page="tarefas">Gerenciar tarefas</button></div>
+    </div>`;
+  }
+
+  function tasksPage() {
+    return `<div class="grid">
+      ${taskForm()}
+      <div class="card"><h3>Filtrar por data</h3>
+        <label>Escolha o dia<input type="date" id="taskFilter" value="${selectedDate}"></label>
+        <div style="margin-top:15px"><button class="btn secondary small" data-action="clearTaskFilter">Ver todas</button></div>
+      </div>
+      <div class="card full"><h3>Lista de tarefas</h3><div id="taskResults">${taskList()}</div></div>
+    </div>`;
+  }
+
+  function officePage() {
+    const officeTasks = data.tasks.filter(t=>t.category==="Consultório");
+    return `<div class="grid">
+      <div class="card"><h3>Organização do consultório</h3>
+        <p class="muted">Use as tarefas com a categoria Consultório para acompanhar pendências administrativas e profissionais.</p>
+        <div class="stat">${officeTasks.filter(t=>!t.done).length}</div><span class="muted">Pendências do consultório</span>
+        <div style="margin-top:15px"><button class="btn" data-page="tarefas">Adicionar tarefa</button></div>
+      </div>
+      <div class="card"><h3>Minhas pendências</h3>${officeTasks.length ? taskListByArray(officeTasks) : `<p class="empty">Nenhuma tarefa de consultório cadastrada.</p>`}</div>
+      <div class="card full"><h3>Compromissos profissionais</h3>
+        ${data.appointments.filter(a=>a.date>=today()).sort((a,b)=>a.date.localeCompare(b.date)).map(a=>`<div class="item"><div><strong>${esc(a.title)}</strong><small>${dateBR(a.date)} · ${esc(a.time||"")}</small></div></div>`).join("") || `<p class="empty">Nenhum compromisso futuro.</p>`}
+      </div>
+    </div>`;
+  }
+
+  function taskListByArray(tasks) {
+    return tasks.map(t=>`<div class="item"><div><strong>${esc(t.title)}</strong><small>${dateBR(t.date)} · ${t.done?"Concluída":"Pendente"}</small></div><button class="btn danger small" data-action="delete" data-list="tasks" data-id="${esc(t.id)}">Excluir</button></div>`).join("");
+  }
+
+  function backupPage() {
+    return `<div class="grid">
+      <div class="card"><h3>Exportar meus dados</h3>
+        <p class="muted">Crie uma cópia de segurança de tarefas, agenda, emoções, Roda da Vida, financeiro, projetos, hábitos e diário.</p>
+        <button class="btn" data-action="export">Baixar backup</button>
+      </div>
+      <div class="card"><h3>Restaurar backup</h3>
+        <p class="muted">Selecione um arquivo JSON exportado anteriormente. A restauração substituirá os dados atuais do aplicativo.</p>
+        <label>Arquivo de backup<input type="file" id="restoreFile" accept=".json,application/json"></label>
+        <button class="btn secondary" data-action="restore">Restaurar arquivo</button>
+      </div>
+      <div class="card full"><h3>Sobre seus dados</h3>
+        <p class="muted">Os registros ficam armazenados neste navegador e neste dispositivo. Eles não são sincronizados automaticamente com outros aparelhos. Faça backups frequentes e guarde o arquivo em local seguro.</p>
+        <p class="muted">Evite registrar dados pessoais identificáveis de pacientes neste aplicativo.</p>
+        <button class="btn danger small" data-action="clearAll">Apagar todos os dados</button>
+      </div>
+    </div>`;
+  }
+
+  function render() {
+    const el = document.getElementById("content");
+    const views = {
+      inicio: home, agenda: agendaPage, tarefas: tasksPage,
+      emocoes: emotionPage, roda: wheelPage, consultorio: officePage,
+      financeiro: financePage, projetos: projectPage,
+      habitos: habitsPage, diario: diaryPage, backup: backupPage
+    };
+    el.innerHTML = (views[page] || home)();
+    if (page === "roda") drawWheel();
+    const intensity = document.getElementById("intensity");
+    if (intensity) intensity.addEventListener("input", () => {
+      document.getElementById("intensityValue").textContent = intensity.value;
+    });
+    const progress = document.getElementById("projectProgress");
+    if (progress) progress.addEventListener("input", () => {
+      document.getElementById("progressValue").textContent = progress.value;
+    });
+  }
+
+  function formObject(form) {
+    return Object.fromEntries(new FormData(form).entries());
+  }
+
+  document.getElementById("menu").addEventListener("click", e => {
+    const btn = e.target.closest("[data-page]");
+    if (btn) setPage(btn.dataset.page);
+  });
+
+  document.getElementById("content").addEventListener("click", e => {
+    const pageBtn = e.target.closest("[data-page]");
+    if (pageBtn) { setPage(pageBtn.dataset.page); return; }
+
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    const action = btn.dataset.action;
+
+    if (action === "delete") {
+      const list = btn.dataset.list;
+      const id = btn.dataset.id;
+      if (Array.isArray(data[list])) {
+        data[list] = data[list].filter(item => item.id !== id);
+        save(); render();
+      }
+    }
+    if (action === "taskDone") return;
+    if (action === "habitDone") return;
+
+    if (action === "selectDate") {
+      selectedDate = btn.dataset.date;
+      render();
+    }
+    if (action === "prevMonth") {
+      calendarMonth.setMonth(calendarMonth.getMonth()-1); render();
+    }
+    if (action === "nextMonth") {
+      calendarMonth.setMonth(calendarMonth.getMonth()+1); render();
+    }
+    if (action === "clearTaskFilter") {
+      document.getElementById("taskFilter").value = "";
+      document.getElementById("taskResults").innerHTML = taskList();
+    }
+    if (action === "export") exportData();
+    if (action === "restore") restoreData();
+    if (action === "clearAll") {
+      if (confirm("Tem certeza? Todos os dados deste aplicativo serão apagados. Faça um backup antes.")) {
+        data = blankData(); save(); render();
+      }
+    }
+  });
+
+  document.getElementById("content").addEventListener("change", e => {
+    const el = e.target;
+    if (el.dataset.action === "taskDone") {
+      const item = data.tasks.find(t=>t.id===el.dataset.id);
+      if (item) { item.done = el.checked; save(); render(); }
+    }
+    if (el.dataset.action === "habitDone") {
+      const item = data.habits.find(h=>h.id===el.dataset.id);
+      if (item) { item.done = el.checked; save(); render(); }
+    }
+    if (el.id === "taskFilter") {
+      document.getElementById("taskResults").innerHTML = taskList(el.value || null);
+    }
+  });
+
+  document.getElementById("content").addEventListener("submit", e => {
+    e.preventDefault();
+    const form = e.target;
+    const v = formObject(form);
+
+    if (form.id === "taskForm") {
+      data.tasks.push({id:uid(), title:v.title.trim(), date:v.date, time:v.time, category:v.category, done:false});
+    }
+    if (form.id === "appointmentForm") {
+      data.appointments.push({id:uid(), title:v.title.trim(), date:v.date, time:v.time, place:v.place});
+    }
+    if (form.id === "emotionForm") {
+      data.emotions.push({id:uid(), date:today(), emotion:v.emotion, intensity:Number(v.intensity), note:v.note});
+    }
+    if (form.id === "wheelForm") {
+      const scores = dimensions.map((_,i)=>Math.max(0,Math.min(10,Number(v["score"+i]))));
+      data.wheel.push({id:uid(), date:today(), scores, note:v.note});
+    }
+    if (form.id === "financeForm") {
+      data.finance.push({id:uid(), description:v.description.trim(), type:v.type, value:Number(v.value), date:v.date, category:v.category});
+    }
+    if (form.id === "projectForm") {
+      data.projects.push({id:uid(), name:v.name.trim(), status:v.status, progress:Number(v.progress)});
+    }
+    if (form.id === "habitForm") {
+      data.habits.push({id:uid(), name:v.name.trim(), date:v.date, done:false});
+    }
+    if (form.id === "diaryForm") {
+      data.diary.push({id:uid(), date:v.date, title:v.title, text:v.text});
+    }
+    save();
+    render();
+  });
+
+  function exportData() {
+    const payload = {
+      app: "Meu Assistente — Viviane Dorea",
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      data
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "meu-assistente-backup-" + today() + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function restoreData() {
+    const file = document.getElementById("restoreFile").files[0];
+    if (!file) { alert("Selecione um arquivo de backup."); return; }
+    if (!confirm("A restauração substituirá os dados atuais. Deseja continuar?")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const incoming = parsed.data || parsed;
+        const validKeys = Object.keys(blankData());
+        const restored = blankData();
+        validKeys.forEach(key => {
+          if (Array.isArray(incoming[key])) restored[key] = incoming[key];
+        });
+        data = restored;
+        save();
+        alert("Backup restaurado com sucesso.");
+        setPage("inicio");
+      } catch (err) {
+        alert("Não foi possível ler esse arquivo. Confira se ele é um backup válido.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  document.getElementById("todayLabel").textContent =
+    new Date().toLocaleDateString("pt-BR", {weekday:"long", day:"2-digit", month:"long", year:"numeric"});
+
+  load();
+  render();
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(err =>
+        console.log("Service Worker não registrado:", err)
+      );
+    });
+  }
+})();
+</script>
 </body>
 </html>
